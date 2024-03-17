@@ -1,10 +1,12 @@
 class Board:
-    def __init__(self, rows, cols):
+    def __init__(self, rows, cols, next_player):
         self.rows = rows
         self.cols = cols
         self.PLAYER1 = 'X'
         self.PLAYER2 = 'O'
         self.grid = [['-' for _ in range(cols)] for _ in range(rows)]
+        self.next_player = next_player
+        
 
 
     def print_board(self):
@@ -82,8 +84,8 @@ class Board:
             
         return 0
         
-    #heurisitca para o astar?
-    #nao falta atribuir os pontos da vitória ou derrota?
+    #heurisitca para o AStar?
+    #nao falta atribuir os pontos da vitória ou derrota? 
     def evaluate(self, player):
         total_score = 0
 

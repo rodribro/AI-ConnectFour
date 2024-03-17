@@ -1,6 +1,5 @@
-import math
-import queue
 from board import *
+from astar import *
 
 rows = 6
 cols = 7
@@ -8,7 +7,7 @@ cols = 7
 
 
 def player_vs_player(rows, cols):
-    board = Board(6,7)
+    board = board(6,7)
     player = 'X'
 
     while True:
@@ -34,42 +33,9 @@ def player_vs_player(rows, cols):
             break
 
         player = 'O' if player == 'X' else 'X'
-
-
-player_vs_player(6,7)
-
-def A_Star(initialBoard, heuristic):
-
-    #queue onde vamos guardando os nós pela ordem que
-    #devem ser expandidos, expandimos os que apresentarem
-    #o menor custo
-    boardQueue = queue.PriorityQueue(maxsize=0)
-    
-    #Structure to keep track of path, dictionary
-    #keys represent the current node?
-    #values represent the previous node?
-    cameFrom = {} 
-
-    #Cost of the path from start node
-    #to current node, g(currentboard)
-    g = set()
-    g[initialBoard] = 0
-
-    #Function to represent current best guess as
-    #to which path leads to win
-    f = set()
-    f[initialBoard] = initialBoard.evaluate(initialBoard, 'O') #Acho que isto não está bem estruturado
-
-    #Heuristica
-    heuristic
-
-    #Implementamos aqui a função para gerar filhos?
-    def generateChildrenNodes():
-        return 0
-    
-    #while not boardQueue.empty():
         
     
         
+
 
 
