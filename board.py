@@ -6,6 +6,7 @@ class Board:
         self.PLAYER2 = 'O'
         self.grid = [['-' for _ in range(cols)] for _ in range(rows)]
 
+
     def print_board(self):
         for row in self.grid:
             print(" ".join(row))
@@ -14,8 +15,8 @@ class Board:
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = player
-                return True
-        return False
+                return True 
+        return False 
 
     def is_full(self):
         return all(self.grid[0][col] != '-' for col in range(self.cols))
@@ -59,6 +60,7 @@ class Board:
 
         return player2_count != 0 and player1_count != 0
 
+    #falta acrescentar +/-16 pts consoante o jogador do move seguinte?
     def evaluate_segment(self, segment, player):
         if self.segment_has_both(segment) or segment.count(player):
             return 0
@@ -80,7 +82,8 @@ class Board:
             
         return 0
         
-
+    #heurisitca para o astar?
+    #nao falta atribuir os pontos da vitória ou derrota?
     def evaluate(self, player):
         total_score = 0
 
