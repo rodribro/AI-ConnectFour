@@ -106,7 +106,5 @@ def evaluate_board(board, player):
 
     return total_score
 
-
-
-
+player_vs_player(6,7)
 
