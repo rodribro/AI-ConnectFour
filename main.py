@@ -1,5 +1,5 @@
-from astar import *
 from board import *
+from astar import *
 from game import *
 
 
