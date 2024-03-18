@@ -7,7 +7,7 @@ cols = 7
 
 
 def player_vs_player(rows, cols):
-    board = board(6,7)
+    board = Board(6,7, 'X')
     player = 'X'
 
     while True:
@@ -17,8 +17,11 @@ def player_vs_player(rows, cols):
         if not (0 <= column < cols):
             print("Invalid column! Please choose a column within the board range.")
             continue
+        
+        
+        if board.drop_piece( column, player):
+            player = 'O' if player == 'X' else 'X'
 
-        board.drop_piece( column, player)
         #Não podíamos implementar um counter e uma condição para evitar
         #verificar se alguém já ganhou até ser efetivamente possível ganhar?
         #Como só dá para ganhar a partir de x move
@@ -32,10 +35,8 @@ def player_vs_player(rows, cols):
             print("It's a draw!")
             break
 
-        player = 'O' if player == 'X' else 'X'
         
     
         
-
-
+player_vs_player(6,7)
 
