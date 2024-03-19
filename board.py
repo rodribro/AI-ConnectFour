@@ -1,24 +1,52 @@
 class Board:
-    def __init__(self, rows, cols, next_player):
+    def __init__(self, rows, cols, turn):
         self.rows = rows
         self.cols = cols
         self.PLAYER1 = 'X'
         self.PLAYER2 = 'O'
+        self.score = 0
+        self.game_over = False
         self.grid = [['-' for _ in range(cols)] for _ in range(rows)]
-        self.next_player = next_player
+        self.turn = turn
+        self.last_move = None
         
+    def __lt__(self, board):
+            return self.score < board.score 
 
-
+    def change_turn(self):
+        if self.turn == 'X':
+            self.turn = 'O'
+        else:
+            self.turn = 'X'
+            
     def print_board(self):
         for row in self.grid:
             print(" ".join(row))
 
-    def drop_piece(self, col, player):
+    def drop_piece(self, col):
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
-                self.grid[row][col] = player
+                self.grid[row][col] = self.turn
+                self.change_turn()
+                self.last_move= col
+                self.score = self.evaluate()
                 return True 
         return False 
+    
+    def copy(self):
+        new_grid = [[item for item in row] for row in self.grid]  # List comprehension for deep copy
+        new_board = Board(self.rows, self.cols, self.turn)
+        new_board.grid = new_grid
+        return new_board
+    
+    def __str__(self):
+
+        board_string = ""
+        for row in self.grid:
+            board_string += "".join(row) + "\n"  # Join row elements and add newline
+        return board_string.rstrip()  # Remove trailing newline
+
+
 
     def is_full(self):
         return all(self.grid[0][col] != '-' for col in range(self.cols))
@@ -35,18 +63,22 @@ class Board:
       for row in range(len(self.grid)):
           for col in range(len(self.grid[0]) - 3):
               if all(self.grid[row][col + i] == player for i in range(4)):
+                  self.game_over= player
                   return True
 
       for row in range(len(self.grid) - 3):
           for col in range(len(self.grid[0])):
               if all(self.grid[row + i][col] == player for i in range(4)):
-                  return True
+                self.game_over= player
+                return True
 
       for row in range(len(self.grid) - 3):
           for col in range(len(self.grid[0]) - 3):
               if all(self.grid[row + i][col + i] == player for i in range(4)):
-                  return True
+                self.game_over= player
+                return True
               if all(self.grid[row + 3 - i][col + i] == player for i in range(4)):
+                  self.game_over= player
                   return True
 
       return False
@@ -62,52 +94,69 @@ class Board:
 
         return player2_count != 0 and player1_count != 0
 
-    #falta acrescentar +/-16 pts consoante o jogador do move seguinte?
-    def evaluate_segment(self, segment, player):
-        if self.segment_has_both(segment) or segment.count(player):
+    def evaluate_segment(self, segment):
+        if self.check_winner(self.PLAYER1):
+            return 512 
+        if self.check_winner(self.PLAYER2):
+            return -512 
+
+        if self.segment_has_both(segment) or segment.count(self.turn):
             return 0
-        if  segment.count(player) == 3 :
-            if(player == self.PLAYER1):
+        
+        if  segment.count(self.turn) == 3 :
+            if(self.turn== self.PLAYER1):
                 return 50
             else:
                 return -50
-        if  segment.count(player) == 2 :
-            if(player == self.PLAYER1):
+        if  segment.count(self.turn) == 2 :
+            if(self.turn == self.PLAYER1):
                 return 10
             else:
                 return -10
-        if  segment.count(player) == 1 :
-            if(player == self.PLAYER1):
+        if  segment.count(self.turn) == 1 :
+            if(self.turn == self.PLAYER1):
                 return 1
             else:
                 return -1
             
         return 0
         
-    #heurisitca para o AStar?
-    #nao falta atribuir os pontos da vitória ou derrota? 
-    def evaluate(self, player):
+    #TODO: Checkar se o evaluete esta mesmo bem
+    def evaluate(self):
         total_score = 0
 
         for row in range(self.rows):
             for col in range(self.cols - 3):
-                segment = self.get_segment(row, col, 0, 1)
-                total_score += self.evaluate_segment(segment, player)
+                segment = self.get_segment(row, col, 0, 1)                
+                total_score += self.evaluate_segment(segment)
 
         for col in range(self.cols):
             for row in range(self.rows - 3):
-                segment = self.get_segment(row, col, 1, 0)
-                total_score += self.evaluate_segment(segment, player)
+                segment = self.get_segment(row, col, 1, 0)                
+                total_score += self.evaluate_segment(segment)
 
         for row in range(self.rows - 3):
             for col in range(self.cols - 3):
                 segment = self.get_segment(row, col, 1, 1)
-                total_score += self.evaluate_segment(segment, player)
+                total_score += self.evaluate_segment(segment)
 
         for row in range(self.rows - 3):
             for col in range(self.cols - 3):
-                segment = self.get_segment(row + 3, col, -1, 1)
-                total_score += self.evaluate_segment(segment, player)
+                segment = self.get_segment(row + 3, col, -1, 1)                
+                total_score += self.evaluate_segment(segment)
 
+        if self.turn == self.PLAYER1:
+            total_score += 16
+        else:
+            total_score -= 16
         return total_score
         
+    def get_successors(self):
+        successors = []
+        for i in range(self.cols):
+            suc = self.copy()
+            if suc.drop_piece(i):
+                successors.append(suc)
+        return successors
+    
+    

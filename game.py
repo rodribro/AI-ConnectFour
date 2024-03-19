@@ -1,42 +1,49 @@
-from board import *
 from astar import *
-
-rows = 6
-cols = 7
+from time import sleep
 
 
-
-def player_vs_player(rows, cols):
-    board = Board(6,7, 'X')
-    player = 'X'
-
+def play_game(board, algorithm=None):
     while True:
         board.print_board()
-        column = int(input(f"Player {player}, enter the column number (1-{cols}): ")) - 1
 
-        if not (0 <= column < cols):
+
+        if board.game_over:
+            print(f"Player {board.turn} wins!")
+            break
+
+
+        column = int(input(f"Player {board.turn}, enter the column number (1-{board.cols}): ")) - 1
+
+        if not (0 <= column < board.cols):
             print("Invalid column! Please choose a column within the board range.")
             continue
         
         
-        if board.drop_piece( column, player):
-            player = 'O' if player == 'X' else 'X'
+        board.drop_piece(column)
 
-        #Não podíamos implementar um counter e uma condição para evitar
-        #verificar se alguém já ganhou até ser efetivamente possível ganhar?
-        #Como só dá para ganhar a partir de x move
-        if board.check_winner( player):
-            board.print_board()
-            print(f"Player {player} wins!")
-            break
 
-        if all(board.grid[0][col] != '-' for col in range(cols)):
+        #TODO: Ele esta a passar mais um no next_player entao dá a vitória ao jogador errado
+        #TODO: depois do input vencedor ele joga mais uma vez
+            
+        
+        if all(board.grid[0][col] != '-' for col in range(board.cols)):
             board.print_board()
             print("It's a draw!")
             break
 
+        if algorithm is not None:
+            #sleep(0.5)
+            if algorithm == "astar":
+                board.drop_piece(astar(board))
+            else:
+                pass
+
+        
         
     
+    
+
+
+    
         
-player_vs_player(6,7)
 

@@ -1,45 +1,24 @@
-import heapq
-from board import *
+from heapq import heappop, heappush, heapify
+from board import Board
 
 class Node:
-    def __init__(self, state, parent=None, cost=0, heuristic=0):
-        self.state = state
+    def __init__(self, board, player, parent=None, column_played=None):
+        self.board = board
+        self.player = player
         self.parent = parent
-        self.cost = cost
-        self.heuristic = heuristic
+        self.column_played = column_played
+        self.score = 0
 
-    def __lt__(self, other):
-        return (self.cost + self.heuristic) < (other.cost + other.heuristic)
+    def __lt__(self, node):
+        return self.score < node.score 
 
-def generate_successors(board, player):
-    successors = []
-    for col in range(board.cols):
-        if board.drop_piece(col, player):
-            successors.append(board)
-            # Undo the move for next iteration
-            board = Board(board.rows, board.cols, board.next_player)
-    return successors
+def astar(board):
+    successors = board.get_successors()
+    
+    
+    frontier = []
+    for suc in successors:
+       heappush(frontier, suc)
 
-def astar(initial_state, player):
-    open_list = []
-    closed_set = set()
-
-    initial_node = Node(initial_state, None, 0, initial_state.evaluate(player))
-    heapq.heappush(open_list, initial_node)
-
-    while open_list:
-        current_node = heapq.heappop(open_list)
-
-        if current_node.state.check_winner(player):
-            return current_node
-
-        closed_set.add(current_node.state)
-
-        successors = generate_successors(current_node.state, player)
-        for successor in successors:
-
-            if successor not in closed_set:
-                successor_node = Node(successor, current_node, current_node.cost + 1, successor.evaluate(player))
-                heapq.heappush(open_list, successor_node)
-
-    return None
+    best = heappop(frontier)
+    return best.last_move

@@ -1,4 +1,15 @@
-import queue
+import random
+from board import *
+from astar import *
 
-boardQueue = queue.PriorityQueue(maxsize=0)
+
+
+board = Board(6,7,'X')
+
+for i in range(10):
+    board.drop_piece(random.randint(0,6))
+
+
+print(board)
+print(astar(board))
 
