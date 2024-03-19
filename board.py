@@ -100,7 +100,7 @@ class Board:
         if self.check_winner(self.PLAYER2):
             return -512 
 
-        if self.segment_has_both(segment) or segment.count(self.turn):
+        if self.segment_has_both(segment) or segment.count(self.turn) == 0:
             return 0
         
         if  segment.count(self.turn) == 3 :

@@ -8,7 +8,7 @@ def play_game(board, algorithm=None):
 
 
         if board.game_over:
-            print(f"Player {board.turn} wins!")
+            print(f"Player {board.game_over} wins!")
             break
 
 
@@ -20,6 +20,10 @@ def play_game(board, algorithm=None):
         
         
         board.drop_piece(column)
+
+        if board.game_over:
+            print(f"Player {board.game_over} wins!")
+            break
 
 
         #TODO: Ele esta a passar mais um no next_player entao dá a vitória ao jogador errado
