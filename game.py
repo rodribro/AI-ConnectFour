@@ -1,4 +1,5 @@
 from astar import *
+from mcts import *
 from time import sleep
 
 
@@ -25,10 +26,6 @@ def play_game(board, algorithm=None):
             print(f"Player {board.game_over} wins!")
             break
 
-
-        #TODO: Ele esta a passar mais um no next_player entao dá a vitória ao jogador errado
-        #TODO: depois do input vencedor ele joga mais uma vez
-            
         
         if all(board.grid[0][col] != '-' for col in range(board.cols)):
             board.print_board()
@@ -39,6 +36,8 @@ def play_game(board, algorithm=None):
             #sleep(0.5)
             if algorithm == "astar":
                 board.drop_piece(astar(board))
+            elif algorithm == "mcts":
+                board.drop_piece(mcts(board))
             else:
                 pass
 

@@ -94,6 +94,8 @@ class Board:
 
         return player2_count != 0 and player1_count != 0
 
+#TODO: os pontos tem de ser vistos em todas as direçẽos, e independentemente da 1 jogada a bola tem de ir para cima
+
     def evaluate_segment(self, segment):
         if self.check_winner(self.PLAYER1):
             return 512 
@@ -118,7 +120,7 @@ class Board:
                 return 1
             else:
                 return -1
-            
+        
         return 0
         
     #TODO: Checkar se o evaluete esta mesmo bem
