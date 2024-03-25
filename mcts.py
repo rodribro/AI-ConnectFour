@@ -55,7 +55,7 @@ def uct_search(root, budget, timeout):
 
     return select_best_child(root)
 
-
+# nao sei que merda é o lambda so copiei do gajo
 def select_best_child(node):
     return max(node.children, key=lambda n: n.visits)
 
