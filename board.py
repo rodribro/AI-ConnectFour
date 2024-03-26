@@ -1,3 +1,5 @@
+from meta import GameMeta
+
 class Board:
     def __init__(self, rows, cols, turn):
         self.rows = rows
@@ -34,7 +36,7 @@ class Board:
         return False 
     
     def copy(self):
-        new_grid = [[item for item in row] for row in self.grid]  # List comprehension for deep copy
+        new_grid = [[item for item in row] for row in self.grid]  
         new_board = Board(self.rows, self.cols, self.turn)
         new_board.grid = new_grid
         return new_board
@@ -43,9 +45,11 @@ class Board:
 
         board_string = ""
         for row in self.grid:
-            board_string += "".join(row) + "\n"  # Join row elements and add newline
-        return board_string.rstrip()  # Remove trailing newline
+            board_string += "".join(row) + "\n"  
+        return board_string.rstrip() 
 
+    def get_legal_moves(self):
+        return [col for col in range(GameMeta.COLS) if self.board[0][col] == 0] 
 
 
     def is_full(self):
@@ -152,6 +156,12 @@ class Board:
         else:
             total_score -= 16
         return total_score
+    
+    def get_outcome(self):
+        if len(self.get_legal_moves()) == 0 and self.check_win() == 0:
+            return GameMeta.OUTCOMES['draw']
+
+        return GameMeta.OUTCOMES['X'] if self.check_win() == GameMeta.PLAYERS['X'] else GameMeta.OUTCOMES['O']
         
     def get_successors(self):
         successors = []

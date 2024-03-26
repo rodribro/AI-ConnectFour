@@ -1,7 +1,7 @@
 from astar import *
 from mcts import *
 from time import sleep
-
+from board import Board
 
 def play_game(board, algorithm=None):
     while True:
@@ -23,14 +23,7 @@ def play_game(board, algorithm=None):
         board.drop_piece(column)
 
         if board.game_over:
-            print(f"Player {board.game_over} wins!")
-            break
-
-        
-        if all(board.grid[0][col] != '-' for col in range(board.cols)):
-            board.print_board()
-            print("It's a draw!")
-            break
+            print(Board.get_outcome())
 
         if algorithm is not None:
             #sleep(0.5)

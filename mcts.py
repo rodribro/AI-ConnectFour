@@ -56,8 +56,17 @@ def uct_search(root, budget, timeout):
     return select_best_child(root)
 
 # nao sei que merda é o lambda so copiei do gajo
-def select_best_child(node):
-    return max(node.children, key=lambda n: n.visits)
+def select_best_child(node, exploration_parameter=1.41):
+    best_child = None
+    best_ucb = float('-inf')
+    for child in node.children:
+        if child.visits == 0:
+            return child  # Return unvisited child for exploration
+        ucb = child.score / child.visits + exploration_parameter * math.sqrt(math.log(node.visits) / child.visits)
+        if ucb > best_ucb:
+            best_ucb = ucb
+            best_child = child
+    return best_child
 
 
 
@@ -76,11 +85,18 @@ def expand_node(node):
 def rollout_node(node):
     sim_state = node.state.copy()
     while not sim_state.game_over and not sim_state.is_full():
-        successors = sim_state.get_successors()
-        random_successor = random.choice(successors)
-        sim_state = random_successor.copy()
+        # Check if there are legal moves available
+        legal_moves = [col for col in range(sim_state.cols) if sim_state.grid[0][col] == '-']
+        if not legal_moves:
+            break  # Break out of the loop if there are no legal moves left
+        # Select a random legal move and drop the piece
+        random_move = random.choice(legal_moves)
+        sim_state.drop_piece(random_move)
+
+    # Evaluate the final state and backpropagate the result
     score = sim_state.evaluate() if sim_state.game_over else 0
     backpropagate(node, score)
+
 
 #TODO: Ver se isto esta bem
 def backpropagate(node, score):
