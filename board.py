@@ -161,7 +161,7 @@ class Board:
         if len(self.get_legal_moves()) == 0 and self.check_win() == 0:
             return GameMeta.OUTCOMES['draw']
 
-        return GameMeta.OUTCOMES['X'] if self.check_win() == GameMeta.PLAYERS['X'] else GameMeta.OUTCOMES['O']
+        return GameMeta.OUTCOMES['X'] if self.check_winner() == GameMeta.PLAYERS['X'] else GameMeta.OUTCOMES['O']
         
     def get_successors(self):
         successors = []
