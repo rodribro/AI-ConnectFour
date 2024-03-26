@@ -34,6 +34,7 @@ class Node:
                 best_child = child
 
 
+
         return best_child
 
 #TODO: isto tem de estar mal mas pode ser das outras funcoes estou a ganhar em 4 jogadas
@@ -111,7 +112,7 @@ def backpropagate(node, score):
 
 
 
-def mcts(board, budget=1000, timeout=2):
+def mcts(board, budget=1000, timeout=5):
     root = Node(board)
     best_child = uct_search(root, budget, timeout)
     return best_child.state.last_move

@@ -1,4 +1,3 @@
-from meta import GameMeta
 
 class Board:
     def __init__(self, rows, cols, turn):
@@ -47,9 +46,15 @@ class Board:
         for row in self.grid:
             board_string += "".join(row) + "\n"  
         return board_string.rstrip() 
-
+    
     def get_legal_moves(self):
-        return [col for col in range(GameMeta.COLS) if self.board[0][col] == 0] 
+        legal_moves = []
+        for col in range(self.cols):
+            if self.grid[self.rows - 1][col] == '-':
+                legal_moves.append(col)
+        return legal_moves
+
+
 
 
     def is_full(self):
@@ -157,11 +162,6 @@ class Board:
             total_score -= 16
         return total_score
     
-    def get_outcome(self):
-        if len(self.get_legal_moves()) == 0 and self.check_win() == 0:
-            return GameMeta.OUTCOMES['draw']
-
-        return GameMeta.OUTCOMES['X'] if self.check_winner() == GameMeta.PLAYERS['X'] else GameMeta.OUTCOMES['O']
         
     def get_successors(self):
         successors = []
