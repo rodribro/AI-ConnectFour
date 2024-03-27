@@ -112,7 +112,7 @@ def backpropagate(node, score):
 
 
 
-def mcts(board, budget=1000, timeout=5):
+def mcts(board, budget=1000, timeout=2):
     root = Node(board)
     best_child = uct_search(root, budget, timeout)
     return best_child.state.last_move

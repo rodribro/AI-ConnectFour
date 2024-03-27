@@ -24,15 +24,19 @@ class Board:
         for row in self.grid:
             print(" ".join(row))
 
-    def drop_piece(self, col):
+    def drop_piece(self, col, heuristic=None):
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
                 self.change_turn()
-                self.last_move= col
-                self.score = self.evaluate()
-                return True 
-        return False 
+                self.last_move = col
+                if heuristic is not None:
+                    self.score = heuristic()  
+                else:
+                    self.score = self.evaluate()  
+                return True
+        return False
+
     
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
@@ -53,8 +57,6 @@ class Board:
             if self.grid[self.rows - 1][col] == '-':
                 legal_moves.append(col)
         return legal_moves
-
-
 
 
     def is_full(self):
@@ -91,7 +93,17 @@ class Board:
                   return True
 
       return False
+    
+    def get_successors(self):
+        successors = []
+        for i in range(self.cols):
+            suc = self.copy()
+            if suc.drop_piece(i):
+                successors.append(suc)
+        return successors
+    
 
+#TODO passar tudo o que esta para baixo para o A*
     def segment_has_both(self,segment):
         player2_count = 0
         player1_count = 0
@@ -163,12 +175,5 @@ class Board:
         return total_score
     
         
-    def get_successors(self):
-        successors = []
-        for i in range(self.cols):
-            suc = self.copy()
-            if suc.drop_piece(i):
-                successors.append(suc)
-        return successors
     
     

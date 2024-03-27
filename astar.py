@@ -21,3 +21,5 @@ def astar(board):
 
     best = heappop(frontier)
     return best.last_move
+
+
