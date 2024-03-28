@@ -2,12 +2,12 @@ from heapq import heappop, heappush, heapify
 from board import Board
 
 class Node:
-    def init(self, board, player, parent=None, column_played=None):
+    def init(self, board:Board, player, parent=None, column_played=None):
         self.board = board
         self.player = player
         self.parent = parent
         self.column_played = column_played
-        self.score = 0
+        self.score = board.evaluate()
 
     def lt(self, node):
         return self.score < node.score 
