@@ -1,9 +1,9 @@
 from astar import astar
 from mcts import *
-from time import sleep
+from board import *
+from minimax import *
 
-
-def play_game(board, algorithm=None):
+def play_game(board: Board, algorithm=None):
     while True:
         board.print_board()
 
@@ -20,12 +20,13 @@ def play_game(board, algorithm=None):
         if algorithm is None:
             board.drop_piece(column)
         else:
-            if algorithm == "astar":
-                board.drop_piece(column, astar.evaluate(board))  
+            if algorithm == "astar" or algorithm == "minimax":
+                board.drop_piece(column, board.evaluate)  
             elif algorithm == "mcts":
                 board.drop_piece(column)  
 
         if board.game_over:
+            board.print_board()
             print(f"Player {board.game_over} wins!")
             break
 
@@ -38,7 +39,9 @@ def play_game(board, algorithm=None):
             if algorithm == "astar":
                 board.drop_piece(column, astar.evaluate)
             elif algorithm == "mcts":
-                board.drop_piece(column)
+                board.drop_piece(mcts(board))
+            elif algorithm == "minimax":
+                board.drop_piece(minimax(board, 3))
             else:
                 pass
 

@@ -33,8 +33,6 @@ class Node:
                 best_score = score
                 best_child = child
 
-
-
         return best_child
 
 #TODO: isto tem de estar mal mas pode ser das outras funcoes estou a ganhar em 4 jogadas
