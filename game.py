@@ -38,9 +38,11 @@ def play_game(board: Board, algorithm=None):
         if algorithm is not None:
             if algorithm == "astar":
                 board.drop_piece(astar(board))
+                
             elif algorithm == "mcts":
                 board.drop_piece(mcts(board))
             elif algorithm == "minimax":
                 board.drop_piece(minimax(board, 1))
+                
             else:
                 pass

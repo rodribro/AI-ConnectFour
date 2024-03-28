@@ -8,7 +8,7 @@ class Node:
         self.parent = parent
         self.children = []
         self.visits = 0
-        self.score = 0
+        self.wins = 0
 
     def is_fully_expanded(self):
         return len(self.children) == len(self.state.get_successors())
@@ -26,7 +26,7 @@ class Node:
         best_score = float('-inf')
 
         for child in self.children:
-            exploitation = child.score / child.visits if child.visits > 0 else 0
+            exploitation = child.wins / child.visits if child.visits > 0 else 0 
             exploration = math.sqrt(math.log(self.visits) / child.visits) if child.visits > 0 else float('inf')
             score = exploitation + exploration_parameter * exploration
             if score > best_score:
@@ -62,7 +62,7 @@ def select_best_child(node, exploration_parameter=1.41):
     for child in node.children:
         if child.visits == 0:
             return child  # Return unvisited child for exploration
-        ucb = child.score / child.visits + exploration_parameter * math.sqrt(math.log(node.visits) / child.visits)
+        ucb = child.wins / child.visits + exploration_parameter * math.sqrt(math.log(node.visits) / child.visits)
         if ucb > best_ucb:
             best_ucb = ucb
             best_child = child
@@ -103,7 +103,7 @@ def backpropagate(node, score):
     current_node = node
     while current_node:
         current_node.visits += 1
-        current_node.score += score
+        current_node.wins += score
         current_node = current_node.parent
         score *= -1  #troca para o outro player nao sei se é assim a melhor forma
 

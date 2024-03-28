@@ -37,7 +37,6 @@ class Board:
                 return True
         return False
 
-    
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
         new_board = Board(self.rows, self.cols, self.turn)
