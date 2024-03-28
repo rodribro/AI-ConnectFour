@@ -94,6 +94,8 @@ def rollout_node(node):
         sim_state.drop_piece(random_move)
 
     # Evaluate the final state and backpropagate the result
+        
+    #! ERRO AQUI NAO É SUPOSTO USARMOS A AVALIAÇÃO DA BOARD
     score = sim_state.evaluate() if sim_state.game_over else 0
     backpropagate(node, score)
 
