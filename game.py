@@ -1,4 +1,4 @@
-from astar import *
+from astar import astar
 from mcts import *
 from time import sleep
 
@@ -21,7 +21,7 @@ def play_game(board, algorithm=None):
             board.drop_piece(column)
         else:
             if algorithm == "astar":
-                board.drop_piece(column, board.evaluate)  
+                board.drop_piece(column, astar.evaluate(board))  
             elif algorithm == "mcts":
                 board.drop_piece(column)  
 
@@ -36,9 +36,9 @@ def play_game(board, algorithm=None):
 
         if algorithm is not None:
             if algorithm == "astar":
-                board.drop_piece(astar(board))
+                board.drop_piece(column, astar.evaluate)
             elif algorithm == "mcts":
-                board.drop_piece(mcts(board))
+                board.drop_piece(column)
             else:
                 pass
 
