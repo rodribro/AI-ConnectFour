@@ -7,7 +7,7 @@ class Node:
         self.player = player
         self.parent = parent
         self.column_played = column_played
-        self.score = board.evaluate()
+        self.score = board.get_score()
 
     def lt(self, node):
         return self.score < node.score 

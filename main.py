@@ -1,5 +1,5 @@
 from board import Board
-from game import play_game
+from game import play_game  # Correct import statement
 
 def display_menu():
     print("Which algorithm do you want to play against?")
@@ -13,7 +13,7 @@ def get_algorithm_choice():
         if choice in ['1', '2', '3']:
             return choice
         else:
-            print("Invalid choice. Please enter 1 or 2.")
+            print("Invalid choice. Please enter 1, 2, or 3.")
 
 if __name__ == '__main__':
     rows = 6

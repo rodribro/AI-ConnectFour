@@ -1,7 +1,7 @@
-from astar import *
-from mcts import *
-from board import *
-from minimax import *
+from astar import astar
+from mcts import mcts
+from board import Board
+from minimax import minimax
 
 def play_game(board: Board, algorithm=None):
     while True:
@@ -17,13 +17,7 @@ def play_game(board: Board, algorithm=None):
             print("Invalid column! Please choose a column within the board range.")
             continue
 
-        if algorithm is None:
-            board.drop_piece(column)
-        else:
-            if algorithm == "astar" or algorithm == "minimax":
-                board.drop_piece(column, board.evaluate)
-            elif algorithm == "mcts":
-                board.drop_piece(column)
+        board.drop_piece(column)  # Drop the piece
 
         if board.game_over:
             board.print_board()
@@ -35,13 +29,31 @@ def play_game(board: Board, algorithm=None):
             print("It's a draw!")
             break
 
+        # Switch the turn after each move
+        board.change_turn()
+
         if algorithm is not None:
             if algorithm == "astar":
-                board.drop_piece(astar(board), heuristic=board.evaluate)
-                
+                column_to_play = astar(board)
             elif algorithm == "mcts":
-                board.drop_piece(mcts(board))
+                column_to_play = mcts(board)
             elif algorithm == "minimax":
-                board.drop_piece(minimax(board, 1))
+                column_to_play = minimax(board, 1)
             else:
-                pass
+                column_to_play = None
+
+            if column_to_play is not None:
+                board.drop_piece(column_to_play)
+
+        if board.game_over:
+            board.print_board()
+            print(f"Player {board.game_over} wins!")
+            break
+
+        if all(board.grid[0][col] != '-' for col in range(board.cols)):
+            board.print_board()
+            print("It's a draw!")
+            break
+
+        # Switch the turn again if the game is not over
+        board.change_turn()
