@@ -22,8 +22,6 @@ def play_game(board: Board, algorithm=None):
         else:
             if algorithm == "astar" or algorithm == "minimax":
                 board.drop_piece(column)
-                board.evaluate()
-                board.change_turn()
             elif algorithm == "mcts":
                 board.drop_piece(column)
 
@@ -45,6 +43,5 @@ def play_game(board: Board, algorithm=None):
                 board.drop_piece(mcts(board))
             elif algorithm == "minimax":
                 board.drop_piece(minimax(board, 1))
-                
             else:
                 pass
