@@ -33,10 +33,11 @@ class Board:
                 if heuristic is not None:
                     self.score = heuristic()  
                 else:
-                    self.score = self.evaluate()  
+                    self.score = self.evaluate()
                 return True
         return False
     
+
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
         new_board = Board(self.rows, self.cols, self.turn)
@@ -102,7 +103,6 @@ class Board:
         return successors
     
 
-#TODO passar tudo o que esta para baixo para o A*
     def segment_has_both(self,segment):
         player2_count = 0
         player1_count = 0
