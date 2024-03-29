@@ -23,17 +23,13 @@ class Board:
         for row in self.grid:
             print(" ".join(row))
 
-    
-    def drop_piece(self, col, heuristic=None):
+    def drop_piece(self, col):
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
-                self.change_turn()
                 self.last_move = col
-                if heuristic is not None:
-                    self.score = heuristic()  
-                else:
-                    self.score = self.evaluate()  
+                self.change_turn()
+                self.score = self.evaluate()  
                 return True
         return False
     
@@ -171,6 +167,7 @@ class Board:
             total_score += 16
         else:
             total_score -= 16
+        
 
         return total_score
     

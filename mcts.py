@@ -1,13 +1,15 @@
 import random
 import math
 import time
+from board import Board
 
 class Node:
-    def __init__(self, state, parent=None):
+    def __init__(self, state: Board, parent=None):
         self.state = state
         self.parent = parent
         self.children = []
         self.visits = 0
+        self.score = 0
         self.wins = 0
 
     def is_fully_expanded(self):
@@ -32,7 +34,7 @@ class Node:
             if score > best_score:
                 best_score = score
                 best_child = child
-
+                best_child.score = score
         return best_child
 
 #TODO: isto tem de estar mal mas pode ser das outras funcoes estou a ganhar em 4 jogadas
@@ -49,8 +51,6 @@ def uct_search(root, budget, timeout):
         # Rollout e Backpropagate
         rollout_node(node)
 
-
-
         iterations += 1
 
     return select_best_child(root)
@@ -66,6 +66,7 @@ def select_best_child(node, exploration_parameter=1.41):
         if ucb > best_ucb:
             best_ucb = ucb
             best_child = child
+            best_child.score = ucb
     return best_child
 
 
@@ -82,7 +83,7 @@ def expand_node(node):
         node.children.append(Node(successor, parent=node))
 
 #TODO: o rollout deve estar mal    
-def rollout_node(node):
+def rollout_node(node:Node):
     sim_state = node.state.copy()
     while not sim_state.game_over and not sim_state.is_full():
         # Check if there are legal moves available
@@ -96,7 +97,7 @@ def rollout_node(node):
     # Evaluate the final state and backpropagate the result
         
     #! ERRO AQUI NAO É SUPOSTO USARMOS A AVALIAÇÃO DA BOARD
-    score = sim_state.evaluate() if sim_state.game_over else 0
+    score = node.wins if sim_state.game_over else 0
     backpropagate(node, score)
 
 
@@ -108,7 +109,6 @@ def backpropagate(node, score):
         current_node.wins += score
         current_node = current_node.parent
         score *= -1  #troca para o outro player nao sei se é assim a melhor forma
-
 
 
 
