@@ -1,3 +1,4 @@
+
 class Board:
     def __init__(self, rows, cols, turn):
         self.rows = rows
@@ -23,18 +24,20 @@ class Board:
         for row in self.grid:
             print(" ".join(row))
 
-    
-    def drop_piece(self, col):
+    def drop_piece(self, col, heuristic=None):
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
-                self.change_turn
+                self.change_turn()
                 self.last_move = col
-
+                if heuristic is not None:
+                    self.score = heuristic()  
+                else:
+                    self.score = self.evaluate()  
                 return True
         return False
-    
 
+    
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
         new_board = Board(self.rows, self.cols, self.turn)
@@ -100,7 +103,7 @@ class Board:
         return successors
     
 
-def get_score(self):
+#TODO passar tudo o que esta para baixo para o A*
     def segment_has_both(self,segment):
         player2_count = 0
         player1_count = 0
@@ -111,14 +114,16 @@ def get_score(self):
                 player1_count += 1
 
         return player2_count != 0 and player1_count != 0
-    
-    def evaluate_segment(segment):
+
+#TODO: os pontos tem de ser vistos em todas as direçẽos, e independentemente da 1 jogada a bola tem de ir para cima
+
+    def evaluate_segment(self, segment):
         if self.check_winner(self.PLAYER1):
             return 512 
         if self.check_winner(self.PLAYER2):
             return -512 
 
-        if segment_has_both(segment) or segment.count(self.turn) == 0:
+        if self.segment_has_both(segment) or segment.count(self.turn) == 0:
             return 0
         
         if  segment.count(self.turn) == 3 :
@@ -140,30 +145,34 @@ def get_score(self):
         return 0
         
     #TODO: Checkar se o evaluete esta mesmo bem
-    
-    total_score = 0
-    for row in range(self.rows):
-        for col in range(self.cols - 3):
-            segment = self.get_segment(row, col, 0, 1)                
-            total_score += evaluate_segment(segment)
-    for col in range(self.cols):
+    def evaluate(self):
+        total_score = 0
+
+        for row in range(self.rows):
+            for col in range(self.cols - 3):
+                segment = self.get_segment(row, col, 0, 1)                
+                total_score += self.evaluate_segment(segment)
+
+        for col in range(self.cols):
+            for row in range(self.rows - 3):
+                segment = self.get_segment(row, col, 1, 0)                
+                total_score += self.evaluate_segment(segment)
+
         for row in range(self.rows - 3):
-            segment = self.get_segment(row, col, 1, 0)                
-            total_score += evaluate_segment(segment)
-    for row in range(self.rows - 3):
-        for col in range(self.cols - 3):
-            segment = self.get_segment(row, col, 1, 1)
-            total_score += evaluate_segment(segment)
-    for row in range(self.rows - 3):
-        for col in range(self.cols - 3):
-            segment = self.get_segment(row + 3, col, -1, 1)                
-            total_score += evaluate_segment(segment)
-    if self.turn == self.PLAYER1:
-        total_score += 16
-    else:
-        total_score -= 16
-    
-    return total_score
+            for col in range(self.cols - 3):
+                segment = self.get_segment(row, col, 1, 1)
+                total_score += self.evaluate_segment(segment)
+
+        for row in range(self.rows - 3):
+            for col in range(self.cols - 3):
+                segment = self.get_segment(row + 3, col, -1, 1)                
+                total_score += self.evaluate_segment(segment)
+
+        if self.turn == self.PLAYER1:
+            total_score += 16
+        else:
+            total_score -= 16
+        return total_score
     
         
     
