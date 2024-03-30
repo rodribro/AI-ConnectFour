@@ -41,9 +41,12 @@ class Board:
     #MCTS
     def drop_piece_adversarial(self, col):
         for row in range(self.rows -1 , -1 , -1):
-            self.grid[row][col] = self.turn
-            self.last_move = col
-            self.change_turn()
+            if self.grid[row][col] == '-':
+                self.grid[row][col] = self.turn
+                self.last_move = col
+                self.evaluate()
+                self.change_turn()
+                break
     
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
@@ -61,9 +64,8 @@ class Board:
     def get_legal_moves(self):
         legal_moves = []
         for col in range(self.cols):
-            if self.grid[self.rows - 1][col] == '-':
+            if self.grid[0][col] == '-':
                 legal_moves.append(col)
-        print(legal_moves)
         return legal_moves
 
 

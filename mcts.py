@@ -53,7 +53,7 @@ class MCTSNode:
         if self.parent:
             self.parent.backpropagate(result)
 
-def mcts(board, timeout=5):
+def mcts(board, timeout=2):
     start_time = time.time()
     root = MCTSNode(board)
     while time.time() - start_time < timeout:
@@ -61,7 +61,6 @@ def mcts(board, timeout=5):
         while not node.state.game_over:
             if not node.is_fully_expanded():
                 node = node.expand()
-                print('cona')
                 break
             else:
                 node = node.select_child()
