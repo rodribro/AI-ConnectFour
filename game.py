@@ -45,3 +45,4 @@ def play_game(board: Board, algorithm=None):
                 board.drop_piece_search(minimax(board, 1))
             else:
                 pass
+

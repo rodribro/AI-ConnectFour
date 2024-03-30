@@ -14,6 +14,8 @@ class Board:
         
     def __lt__(self, board):
             return self.score < board.score 
+    
+    
 
     def change_turn(self):
         if self.turn == 'X':
@@ -44,9 +46,13 @@ class Board:
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
                 self.last_move = col
-                self.evaluate()
+                self.check_winner(self.turn)
                 self.change_turn()
-                break
+                #print(self.print_board())
+                return True
+                
+        return False
+        
     
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
@@ -111,6 +117,18 @@ class Board:
             if suc.drop_piece_search(i):
                 successors.append(suc)
         return successors
+    
+    def successors(self):
+        successors=[]
+        possible_moves = []
+        for col in range(self.cols):
+            suc = self.copy()
+            if suc.drop_piece_adversarial(col):
+                successors.append(suc)
+                possible_moves.append(col)
+
+        return successors, possible_moves
+
     
 
 #TODO passar tudo o que esta para baixo para o A*
