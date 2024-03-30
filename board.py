@@ -10,6 +10,7 @@ class Board:
         self.grid = [['-' for _ in range(cols)] for _ in range(rows)]
         self.turn = turn
         self.last_move = None
+        self.algorithm = None
         
     def __lt__(self, board):
             return self.score < board.score 
@@ -24,19 +25,28 @@ class Board:
         for row in self.grid:
             print(" ".join(row))
 
-    def drop_piece(self, col, heuristic=None):
+    #A* and MiniMax, checkar dps
+    def drop_piece_search(self, col):
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
-                self.change_turn()
+                self.change_turn() 
                 self.last_move = col
-                if heuristic is not None:
-                    self.score = heuristic()  
-                else:
-                    self.score = self.evaluate()  
+                self.score = self.evaluate()
+                
+                
                 return True
         return False
-
+    
+    #MCTS
+    def drop_piece_adversarial(self, col):
+        for row in range(self.rows -1 , -1 , -1):
+            if self.grid[row][col] == '-':
+                self.grid[row][col] = self.turn
+                self.last_move = col
+                self.evaluate()
+                self.change_turn()
+                break
     
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
@@ -54,7 +64,7 @@ class Board:
     def get_legal_moves(self):
         legal_moves = []
         for col in range(self.cols):
-            if self.grid[self.rows - 1][col] == '-':
+            if self.grid[0][col] == '-':
                 legal_moves.append(col)
         return legal_moves
 
@@ -98,7 +108,7 @@ class Board:
         successors = []
         for i in range(self.cols):
             suc = self.copy()
-            if suc.drop_piece(i):
+            if suc.drop_piece_search(i):
                 successors.append(suc)
         return successors
     

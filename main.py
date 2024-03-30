@@ -10,10 +10,10 @@ def display_menu():
 def get_algorithm_choice():
     while True:
         choice = input("Enter your choice (1/2/3): ")
-        if choice in ['1', '2', '3']:
+        if choice in ['1', '2', '3','4']:
             return choice
         else:
-            print("Invalid choice. Please enter 1 or 2.")
+            print("Invalid choice. Please enter 1, 2, 3 or 4.")
 
 if __name__ == '__main__':
     rows = 6
@@ -29,3 +29,4 @@ if __name__ == '__main__':
         play_game(Board(rows, cols, first_player), algorithm="mcts")
     elif algorithm_choice == '3':
         play_game(Board(rows, cols, first_player), algorithm="minimax")
+    

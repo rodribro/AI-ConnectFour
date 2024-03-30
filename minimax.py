@@ -42,7 +42,7 @@ def minimax(board, depth):
     max_eval = -math.inf
     for move in legal_moves:
         new_board = board.copy()
-        new_board.drop_piece(move)
+        new_board.drop_piece_search(move)
         new_node = Node(new_board, board.turn)
         eval = minimax_pruns(new_node, depth - 1, -math.inf, math.inf, False) 
         if eval > max_eval:

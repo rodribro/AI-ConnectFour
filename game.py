@@ -18,18 +18,19 @@ def play_game(board: Board, algorithm=None):
             continue
 
         if algorithm is None:
-            board.drop_piece(column)
+            board.drop_piece_search(column)
         else:
             if algorithm == "astar" or algorithm == "minimax":
-                board.drop_piece(column, board.evaluate)
+                board.drop_piece_search(column)
             elif algorithm == "mcts":
-                board.drop_piece(column)
+                board.drop_piece_adversarial(column)
 
         if board.game_over:
             board.print_board()
             print(f"Player {board.game_over} wins!")
             break
-
+        
+        #use isfull
         if all(board.grid[0][col] != '-' for col in range(board.cols)):
             board.print_board()
             print("It's a draw!")
@@ -37,10 +38,10 @@ def play_game(board: Board, algorithm=None):
 
         if algorithm is not None:
             if algorithm == "astar":
-                board.drop_piece(astar(board))
+                board.drop_piece_search(astar(board))
             elif algorithm == "mcts":
-                board.drop_piece(mcts(board))
+                board.drop_piece_adversarial(mcts(board))
             elif algorithm == "minimax":
-                board.drop_piece(minimax(board, 1))
+                board.drop_piece_search(minimax(board, 1))
             else:
                 pass
