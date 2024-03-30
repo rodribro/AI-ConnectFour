@@ -1,118 +1,71 @@
 import random
 import math
 import time
-from board import Board
+from board import *
 
-class Node:
-    def __init__(self, state: Board, parent=None):
-        self.state = state
+class MCTSNode:
+    # mudar o state para board
+    def __init__(self, board, parent=None):
+        self.state = board
         self.parent = parent
         self.children = []
         self.visits = 0
-        self.score = 0
         self.wins = 0
 
     def is_fully_expanded(self):
-        return len(self.children) == len(self.state.get_successors())
+        return len(self.state.get_legal_moves()) == len(self.children)
 
-    def is_terminal(self):
-        return self.state.game_over or self.state.is_full()
-
-
-    #TODO: a exploration esta bem?
-    def select_child(self, exploration_parameter=math.sqrt(2)):
-        if not self.children:
-            return None
-
-        best_child = None
-        best_score = float('-inf')
-
+    def select_child(self):
+        max_ucb1 = float('-inf')
+        selected_child = None
         for child in self.children:
-            exploitation = child.wins / child.visits if child.visits > 0 else 0 
-            exploration = math.sqrt(math.log(self.visits) / child.visits) if child.visits > 0 else float('inf')
-            score = exploitation + exploration_parameter * exploration
-            if score > best_score:
-                best_score = score
-                best_child = child
-                best_child.score = score
-        return best_child
+            if child.visits == 0:
+                return child
+            ucb1 = (child.wins / child.visits) + 1.41 * math.sqrt(math.log(self.visits) / child.visits)
+            if ucb1 > max_ucb1:
+                max_ucb1 = ucb1
+                selected_child = child
+        return selected_child
 
-#TODO: isto tem de estar mal mas pode ser das outras funcoes estou a ganhar em 4 jogadas
-def uct_search(root, budget, timeout):
+    def expand(self):
+        legal_moves = self.state.get_legal_moves()
+        random.shuffle(legal_moves)
+        for move in legal_moves:
+            child_state = self.state.copy()
+            child_state.drop_piece_adversarial(move) #mudar drop piece para ficar so para o mcts
+            new_node = MCTSNode(child_state, parent=self)
+            self.children.append(new_node)
+        return self.select_child()
+
+    def simulate(self):
+        sim_state = self.state.copy()
+        while not sim_state.game_over:
+            legal_moves = sim_state.get_legal_moves()
+            sim_state.drop_piece_adversarial(random.choice(legal_moves))
+        return sim_state.game_over
+
+    def backpropagate(self, result):
+        self.visits += 1
+        if result == 'X':
+            self.wins += 1
+        elif result == 'O':
+            self.wins -= 1
+        if self.parent:
+            self.parent.backpropagate(result)
+
+def mcts(board, timeout=5):
     start_time = time.time()
-    iterations = 0
-    while time.time() - start_time < timeout and iterations < budget:
-        node = select_node(root)
-
-        # Expansion
-        if not node.is_terminal():
-            expand_node(node)
-
-        # Rollout e Backpropagate
-        rollout_node(node)
-
-        iterations += 1
-
-    return select_best_child(root)
-
-# nao sei que merda é o lambda so copiei do gajo
-def select_best_child(node, exploration_parameter=1.41):
-    best_child = None
-    best_ucb = float('-inf')
-    for child in node.children:
-        if child.visits == 0:
-            return child  # Return unvisited child for exploration
-        ucb = child.wins / child.visits + exploration_parameter * math.sqrt(math.log(node.visits) / child.visits)
-        if ucb > best_ucb:
-            best_ucb = ucb
-            best_child = child
-            best_child.score = ucb
-    return best_child
-
-
-
-def select_node(node):
-    while node.children:
-        node = node.select_child()
-    return node
-
-
-def expand_node(node):
-    successors = node.state.get_successors()
-    for successor in successors:
-        node.children.append(Node(successor, parent=node))
-
-#TODO: o rollout deve estar mal    
-def rollout_node(node:Node):
-    sim_state = node.state.copy()
-    while not sim_state.game_over and not sim_state.is_full():
-        # Check if there are legal moves available
-        legal_moves = [col for col in range(sim_state.cols) if sim_state.grid[0][col] == '-']
-        if not legal_moves:
-            break  # Break out of the loop if there are no legal moves left
-        # Select a random legal move and drop the piece
-        random_move = random.choice(legal_moves)
-        sim_state.drop_piece(random_move)
-
-    # Evaluate the final state and backpropagate the result
-        
-    #! ERRO AQUI NAO É SUPOSTO USARMOS A AVALIAÇÃO DA BOARD
-    score = node.wins if sim_state.game_over else 0
-    backpropagate(node, score)
-
-
-#TODO: Ver se isto esta bem
-def backpropagate(node, score):
-    current_node = node
-    while current_node:
-        current_node.visits += 1
-        current_node.wins += score
-        current_node = current_node.parent
-        score *= -1  #troca para o outro player nao sei se é assim a melhor forma
-
-
-
-def mcts(board, budget=1000, timeout=2):
-    root = Node(board)
-    best_child = uct_search(root, budget, timeout)
+    root = MCTSNode(board)
+    while time.time() - start_time < timeout:
+        node = root
+        while not node.state.game_over:
+            if not node.is_fully_expanded():
+                node = node.expand()
+                print('cona')
+                break
+            else:
+                node = node.select_child()
+        result = node.simulate()
+        node.backpropagate(result)
+    best_child = max(root.children, key=lambda child: child.wins / child.visits)
     return best_child.state.last_move
