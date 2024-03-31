@@ -24,6 +24,7 @@ def play_game(board: Board, algorithm=None):
                 board.drop_piece_search(column)
             elif algorithm == "mcts":
                 board.drop_piece_adversarial(column)
+                board.change_turn()
 
         if board.game_over:
             board.print_board()
@@ -41,6 +42,7 @@ def play_game(board: Board, algorithm=None):
                 board.drop_piece_search(astar(board))
             elif algorithm == "mcts":
                 board.drop_piece_adversarial(mcts(board))
+                board.change_turn()
             elif algorithm == "minimax":
                 board.drop_piece_search(minimax(board, 1))
             else:

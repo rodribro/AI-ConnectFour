@@ -47,7 +47,6 @@ class Board:
                 self.grid[row][col] = self.turn
                 self.last_move = col
                 self.check_winner(self.turn)
-                self.change_turn()
                 #print(self.print_board())
                 return True
                 
@@ -124,13 +123,19 @@ class Board:
         for col in range(self.cols):
             suc = self.copy()
             if suc.drop_piece_adversarial(col):
+                suc.change_turn()
                 successors.append(suc)
                 possible_moves.append(col)
 
         return successors, possible_moves
-
+            
     
-
+    def get_opponent(self):
+        if self.turn == 'X':
+            return 'O'
+        else:
+            return 'X'
+        
 #TODO passar tudo o que esta para baixo para o A*
     def segment_has_both(self,segment):
         player2_count = 0
