@@ -6,7 +6,7 @@ from board import *
 
 class MCTSNode:
     def __init__(self, board, last = None,parent=None):
-        self.state = board
+        self.state: Board = board
         self.parent = parent
         self.children = []
         self.visits = 0
@@ -32,7 +32,7 @@ class MCTSNode:
         for child in self.children:
             if child.visits == 0:
                 return child
-            ucb1 = (child.wins / child.visits) + 0.5 * math.sqrt((math.log(self.visits)*2) / child.visits)
+            ucb1 = (child.wins / child.visits) + 1.41 * math.sqrt((math.log(self.visits)*2) / child.visits)
             if ucb1 > max_ucb1:
                 max_ucb1 = ucb1
                 selected_child = child
@@ -48,7 +48,7 @@ class MCTSNode:
             move = random.choice(unexplored_moves)
             new_board = copy.deepcopy(self.state)
             new_board.drop_piece_adversarial(move)
-            new_board.change_turn()
+            # new_board.change_turn()
             new_node = MCTSNode(new_board, move, parent=self)
             self.children.append(new_node)
 
@@ -58,18 +58,16 @@ class MCTSNode:
 
     def simulate(self):
         sim_state = self.state.copy()
-        while not sim_state.check_winner(self.state.turn) and not sim_state.is_full():
+        while not sim_state.game_over and not sim_state.is_full():
             #print("AHHHHH")
             _, possible_moves = sim_state.successors()
             sim_state.drop_piece_adversarial(random.choice(possible_moves))
-            if sim_state.check_winner(self.state.turn):
+            if sim_state.game_over:
                 break
             sim_state.change_turn()
         return sim_state.game_over
     
     
-
-
     def backpropagate(self, result):
         self.visits += 1
         if result == self.state.turn:
@@ -90,6 +88,7 @@ def mcts(board, timeout=10, iterations = 5000):
         while not node.is_leaf():
             if not node.is_fully_expanded():
                 node = node.expand()
+                node.state.change_turn()
                 break
             else:
                 node = node.select_child()
