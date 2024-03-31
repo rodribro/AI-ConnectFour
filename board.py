@@ -14,6 +14,8 @@ class Board:
         
     def __lt__(self, board):
             return self.score < board.score 
+    
+    
 
     def change_turn(self):
         if self.turn == 'X':
@@ -30,10 +32,10 @@ class Board:
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
-                #self.change_turn() para mudança dific
+                self.change_turn() 
                 self.last_move = col
                 self.score = self.evaluate()
-                self.change_turn()
+                
                 
                 return True
         return False
@@ -44,9 +46,12 @@ class Board:
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
                 self.last_move = col
-                self.evaluate()
-                self.change_turn()
-                break
+                self.check_winner(self.turn)
+                #print(self.print_board())
+                return True
+                
+        return False
+        
     
     def copy(self):
         new_grid = [[item for item in row] for row in self.grid]  
@@ -64,7 +69,7 @@ class Board:
     def get_legal_moves(self):
         legal_moves = []
         for col in range(self.cols):
-            if self.grid[0][col] == '-':
+            if self.grid[0][col] == '-' :
                 legal_moves.append(col)
         return legal_moves
 
@@ -81,6 +86,9 @@ class Board:
         return segment
     
     def check_winner(self, player):
+    #   if self.game_over:
+    #       return True
+      # ter isto descomentado aumenta os scores do mcts mas faz com que o astar fique burro 
       for row in range(len(self.grid)):
           for col in range(len(self.grid[0]) - 3):
               if all(self.grid[row][col + i] == player for i in range(4)):
@@ -112,7 +120,25 @@ class Board:
                 successors.append(suc)
         return successors
     
+    def successors(self):
+        successors=[]
+        possible_moves = []
+        for col in range(self.cols):
+            suc = self.copy()
+            if suc.drop_piece_adversarial(col):
+                suc.change_turn()
+                successors.append(suc)
+                possible_moves.append(col)
 
+        return successors, possible_moves
+            
+    
+    def get_opponent(self):
+        if self.turn == 'X':
+            return 'O'
+        else:
+            return 'X'
+        
 #TODO passar tudo o que esta para baixo para o A*
     def segment_has_both(self,segment):
         player2_count = 0

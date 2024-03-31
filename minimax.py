@@ -1,51 +1,74 @@
-from board import Board
-import math
+# module with alpha-beta pruning
+import random
+from time import time
+from board import *
 
-class Node:
-    def __init__(self, board: Board, player, parent=None, column_played=None):
-        self.board:Board = board
-        self.player = player
-        self.parent = parent
-        self.column_played = column_played
-        self.score = 0
+PRINT_BEST = True
+PRINT_ALL = False
 
-    def __lt__(self, node):
-        return self.score < node.score 
+MAX_DEPTH = 5
 
-def minimax_pruns(node:Node, depth, alpha, beta, maximizing_player=True):
-    if depth == 0 or node.board.game_over:
-        return node.score
 
-    if maximizing_player:
-        max_eval = -math.inf
-        for child_node in node.board.get_successors():
-            eval = minimax_pruns(Node(child_node, node.board.turn), depth - 1, alpha, beta, False)
-            max_eval = max(max_eval, eval)
-            alpha = max(alpha, eval)
+def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf")):
+    nodes_generated = 0
+
+    if board.check_winner(board.turn) or depth == 0:
+        return (board.evaluate(), None), nodes_generated + 1
+
+    if player:
+        max_scores = [(float('-inf'), None)]
+        successors, cols = board.successors()
+
+        for i in range(len(successors)):
+            t, nodes = minimax_pruns(successors[i], depth - 1, False, alpha, beta)
+            score, _ = t
+            alpha = max(alpha, score)
             if beta <= alpha:
                 break
-        return max_eval
+            nodes_generated += nodes
+            if PRINT_ALL:
+                if depth == MAX_DEPTH:
+                    print("Col: " + str(cols[i]) + " Score: " + str(score))
+            if score > max_scores[0][0]:
+                max_scores.clear()
+                max_scores.append((score, cols[i]))
+            elif score == max_scores[0][0]:
+                max_scores.append((score, cols[i]))
+        return random.choice(max_scores), nodes_generated
     else:
-        min_eval = math.inf
-        for child_node in node.board.get_successors():
-            eval = minimax_pruns(Node(child_node, node.board.turn), depth - 1, alpha, beta, True)
-            min_eval = min(min_eval, eval)
-            beta = min(beta, eval)
+        min_scores = [(float('inf'), None)]
+        successors, cols = board.successors()
+        for i in range(len(successors)):
+            t, nodes = minimax_pruns(successors[i], depth - 1, True, alpha, beta)
+            nodes_generated += nodes
+            score, _ = t
+            beta = min(beta, score)
             if beta <= alpha:
                 break
-        return min_eval
+            if PRINT_ALL:
+                if depth == MAX_DEPTH:
+                    print("Col: " + str(cols[i]) + " Score: " + str(score))
+            if score < min_scores[0][0]:
+                min_scores.clear()
+                min_scores.append((score, cols[i]))
+            elif score == min_scores[0][0]:
+                min_scores.append((score, cols[i]))
+        return random.choice(min_scores), nodes_generated
 
-    
-def minimax(board, depth):
-    legal_moves = board.get_legal_moves()
-    best_move = None
-    max_eval = -math.inf
-    for move in legal_moves:
-        new_board = board.copy()
-        new_board.drop_piece(move)
-        new_node = Node(new_board, board.turn)
-        eval = minimax_pruns(new_node, depth - 1, -math.inf, math.inf, False) 
-        if eval > max_eval:
-            max_eval = eval
-            best_move = move
-    return best_move
+
+def minimax(board):
+    ti = time()
+    if board.turn == 'X':
+        t, nodes_generated = minimax_pruns(board, MAX_DEPTH, True)
+        score, col = t
+    else:
+        t, nodes_generated = minimax_pruns(board, MAX_DEPTH, False)
+        score, col = t
+    tf = time()
+    if PRINT_BEST:
+        print("Alpha-Beta pruning algorithm\n")
+        print("Best column: " + str(col + 1))
+        print("Best score: " + str(score))
+        print("Time: " + str(round(tf - ti, 5)) + "s")
+        print("Nodes generated: " + str(nodes_generated) + "\n")
+    return col

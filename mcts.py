@@ -1,19 +1,30 @@
 import random
 import math
 import time
+import copy
 from board import *
 
 class MCTSNode:
-    # mudar o state para board
-    def __init__(self, board, parent=None):
+    def __init__(self, board, last = None,parent=None):
         self.state = board
         self.parent = parent
         self.children = []
         self.visits = 0
         self.wins = 0
+        self.last = last
+
+    def __str__(self):
+        return f"Visits: {self.visits}, Wins: {self.wins}, Column:{self.last+1}"
 
     def is_fully_expanded(self):
-        return len(self.state.get_legal_moves()) == len(self.children)
+        _, legal = self.state.successors()
+        return len(legal) == len(self.children)
+    
+    def is_leaf(self):
+        if (len(self.children) == 0) or self.state.check_winner('X') or self.state.check_winner('O') or self.state.is_full():
+            return True
+        else:
+            return False
 
     def select_child(self):
         max_ucb1 = float('-inf')
@@ -21,50 +32,78 @@ class MCTSNode:
         for child in self.children:
             if child.visits == 0:
                 return child
-            ucb1 = (child.wins / child.visits) + 1.41 * math.sqrt(math.log(self.visits) / child.visits)
+            ucb1 = (child.wins / child.visits) + 0.5 * math.sqrt((math.log(self.visits)*2) / child.visits)
             if ucb1 > max_ucb1:
                 max_ucb1 = ucb1
                 selected_child = child
         return selected_child
 
+#TODO: Expandir individual 
     def expand(self):
-        legal_moves = self.state.get_legal_moves()
-        random.shuffle(legal_moves)
-        for move in legal_moves:
-            child_state = self.state.copy()
-            child_state.drop_piece_adversarial(move) #mudar drop piece para ficar so para o mcts
-            new_node = MCTSNode(child_state, parent=self)
+        # Identifica as jogadas possíveis que ainda não foram exploradas
+        _, unexplored_moves = self.state.successors()
+
+        if unexplored_moves:
+            # Escolhe uma jogada não explorada aleatoriamente para a expansão
+            move = random.choice(unexplored_moves)
+            new_board = copy.deepcopy(self.state)
+            new_board.drop_piece_adversarial(move)
+            new_board.change_turn()
+            new_node = MCTSNode(new_board, move, parent=self)
             self.children.append(new_node)
-        return self.select_child()
+
+            return new_node
+        return None
+
 
     def simulate(self):
         sim_state = self.state.copy()
-        while not sim_state.game_over:
-            legal_moves = sim_state.get_legal_moves()
-            sim_state.drop_piece_adversarial(random.choice(legal_moves))
+        while not sim_state.check_winner(self.state.turn) and not sim_state.is_full():
+            #print("AHHHHH")
+            _, possible_moves = sim_state.successors()
+            sim_state.drop_piece_adversarial(random.choice(possible_moves))
+            if sim_state.check_winner(self.state.turn):
+                break
+            sim_state.change_turn()
         return sim_state.game_over
+    
+    
+
 
     def backpropagate(self, result):
         self.visits += 1
-        if result == 'X':
+        if result == self.state.turn:
+            self.wins += 0
+        elif result == self.state.get_opponent():
             self.wins += 1
-        elif result == 'O':
-            self.wins -= 1
         if self.parent:
+            self.state.change_turn()
             self.parent.backpropagate(result)
 
-def mcts(board, timeout=2):
+
+def mcts(board, timeout=10, iterations = 5000):
     start_time = time.time()
     root = MCTSNode(board)
-    while time.time() - start_time < timeout:
+    root.expand()
+    while iterations>0:
         node = root
-        while not node.state.game_over:
+        while not node.is_leaf():
             if not node.is_fully_expanded():
                 node = node.expand()
                 break
             else:
                 node = node.select_child()
+
         result = node.simulate()
         node.backpropagate(result)
+        iterations-=1
     best_child = max(root.children, key=lambda child: child.wins / child.visits)
-    return best_child.state.last_move
+    print("--------------------------------------")
+    print(best_child)
+    for child in root.children:
+            if child.visits > 0:
+                ratio = child.wins / child.visits
+                print(ratio)
+                print(child.last)
+    
+    return best_child.last
