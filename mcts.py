@@ -81,7 +81,7 @@ class MCTSNode:
             self.parent.backpropagate(result)
 
 
-def mcts(board, timeout=10, iterations = 10000):
+def mcts(board, timeout=10, iterations = 5000):
     start_time = time.time()
     root = MCTSNode(board)
     root.expand()

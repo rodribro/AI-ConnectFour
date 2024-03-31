@@ -69,7 +69,7 @@ class Board:
     def get_legal_moves(self):
         legal_moves = []
         for col in range(self.cols):
-            if self.grid[0][col] == '-':
+            if self.grid[0][col] == '-' :
                 legal_moves.append(col)
         return legal_moves
 
@@ -86,6 +86,9 @@ class Board:
         return segment
     
     def check_winner(self, player):
+    #   if self.game_over:
+    #       return True
+      # ter isto descomentado aumenta os scores do mcts mas faz com que o astar fique burro 
       for row in range(len(self.grid)):
           for col in range(len(self.grid[0]) - 3):
               if all(self.grid[row][col + i] == player for i in range(4)):

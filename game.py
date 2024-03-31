@@ -8,7 +8,8 @@ def play_game(board: Board, algorithm=None):
         board.print_board()
 
         if board.game_over:
-            print(f"Player {board.game_over} wins!")
+            board.change_turn()
+            print(f"Player {board.turn} wins!")
             break
 
         column = int(input(f"Player {board.turn}, enter the column number (1-{board.cols}): ")) - 1
@@ -28,7 +29,8 @@ def play_game(board: Board, algorithm=None):
 
         if board.game_over:
             board.print_board()
-            print(f"Player {board.game_over} wins!")
+            board.change_turn()
+            print(f"Player {board.turn} wins!")
             break
         
         #use isfull
@@ -44,7 +46,7 @@ def play_game(board: Board, algorithm=None):
                 board.drop_piece_adversarial(mcts(board))
                 board.change_turn()
             elif algorithm == "minimax":
-                board.drop_piece_search(minimax(board, 1))
+                board.drop_piece_search(minimax(board))
             else:
                 pass
 
