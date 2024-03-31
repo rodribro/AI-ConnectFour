@@ -71,11 +71,11 @@ def algvsalg(alg1, alg2):
             begginning = False
         else:
             board.drop_piece_adversarial(mcts(board))
+            board.change_turn()
         board.print_board()
 
         if board.game_over:
             board.print_board()
-            board.change_turn()
             winner = alg1 if board.turn == 'O' else alg2
             print(f"Player {winner} wins!")
             break
@@ -92,6 +92,7 @@ def algvsalg(alg1, alg2):
                 board.drop_piece_search(minimax(board))
         else:
             board.drop_piece_adversarial(mcts(board))
+            board.change_turn()
         board.print_board()
         
         

@@ -47,4 +47,3 @@ if __name__ == '__main__':
         algvsalg(algs[int(first_algorithm_choice) - 1], algs[int(second_algorithm_choice) - 1])
     else:
         pass
-
