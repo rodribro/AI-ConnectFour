@@ -12,11 +12,18 @@ class Board:
         self.last_move = None
         self.algorithm = None
         
+    
+    
+    
+    def valid_col(self, col):
+        if col < 0 or col >= self.cols:
+            return False  # Column out of range
+        return '-' in [row[col] for row in self.grid]  # Check if the column has empty slots
+
+    
     def __lt__(self, board):
             return self.score < board.score 
     
-    
-
     def change_turn(self):
         if self.turn == 'X':
             self.turn = 'O'
@@ -126,9 +133,10 @@ class Board:
         for col in range(self.cols):
             suc = self.copy()
             if suc.drop_piece_adversarial(col):
-                suc.change_turn()
                 successors.append(suc)
                 possible_moves.append(col)
+                suc.change_turn()
+
 
         return successors, possible_moves
             
@@ -154,11 +162,6 @@ class Board:
 #TODO: os pontos tem de ser vistos em todas as direçẽos, e independentemente da 1 jogada a bola tem de ir para cima
 
     def evaluate_segment(self, segment):
-        if self.check_winner(self.PLAYER1):
-            return 512 
-        if self.check_winner(self.PLAYER2):
-            return -512 
-
         if self.segment_has_both(segment) or segment.count(self.turn) == 0:
             return 0
         
@@ -183,6 +186,10 @@ class Board:
     #TODO: Checkar se o evaluete esta mesmo bem
     def evaluate(self):
         total_score = 0
+        if self.check_winner(self.PLAYER1):
+            total_score +=  512 
+        if self.check_winner(self.PLAYER2):
+            total_score += -512
 
         for row in range(self.rows):
             for col in range(self.cols - 3):

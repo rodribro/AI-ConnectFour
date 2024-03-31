@@ -6,7 +6,7 @@ from board import *
 
 class MCTSNode:
     def __init__(self, board, last = None,parent=None):
-        self.state = board
+        self.state: Board = board
         self.parent = parent
         self.children = []
         self.visits = 0
@@ -21,7 +21,7 @@ class MCTSNode:
         return len(legal) == len(self.children)
     
     def is_leaf(self):
-        if (len(self.children) == 0) or self.state.check_winner('X') or self.state.check_winner('O') or self.state.is_full():
+        if (len(self.children) == 0):
             return True
         else:
             return False
@@ -41,35 +41,38 @@ class MCTSNode:
 #TODO: Expandir individual 
     def expand(self):
         # Identifica as jogadas possíveis que ainda não foram exploradas
-        _, unexplored_moves = self.state.successors()
-
+        unexplored_moves = [col for col in range(self.state.cols) if self.state.valid_col(col) and all(col != child.last for child in self.children)]
+        
         if unexplored_moves:
             # Escolhe uma jogada não explorada aleatoriamente para a expansão
             move = random.choice(unexplored_moves)
+            #print(move)
+            #print(unexplored_moves)
+            
+            #print(unexplored_moves)
+
             new_board = copy.deepcopy(self.state)
             new_board.drop_piece_adversarial(move)
             new_board.change_turn()
+            #new_board.print_board()
             new_node = MCTSNode(new_board, move, parent=self)
             self.children.append(new_node)
-
             return new_node
         return None
 
 
     def simulate(self):
         sim_state = self.state.copy()
-        while not sim_state.check_winner(self.state.turn) and not sim_state.is_full():
+        while not sim_state.game_over and not sim_state.is_full():
             #print("AHHHHH")
             _, possible_moves = sim_state.successors()
             sim_state.drop_piece_adversarial(random.choice(possible_moves))
-            if sim_state.check_winner(self.state.turn):
+            if sim_state.game_over:
                 break
             sim_state.change_turn()
         return sim_state.game_over
     
     
-
-
     def backpropagate(self, result):
         self.visits += 1
         if result == self.state.turn:
@@ -77,23 +80,22 @@ class MCTSNode:
         elif result == self.state.get_opponent():
             self.wins += 1
         if self.parent:
-            self.state.change_turn()
             self.parent.backpropagate(result)
 
 
 def mcts(board, timeout=10, iterations = 5000):
     start_time = time.time()
     root = MCTSNode(board)
-    root.expand()
+    for i in range(7):
+        root.expand()
     while iterations>0:
         node = root
         while not node.is_leaf():
-            if not node.is_fully_expanded():
-                node = node.expand()
-                break
-            else:
+            if node.is_fully_expanded():
                 node = node.select_child()
-
+            else: 
+                node = node.expand()
+            
         result = node.simulate()
         node.backpropagate(result)
         iterations-=1
@@ -104,6 +106,6 @@ def mcts(board, timeout=10, iterations = 5000):
             if child.visits > 0:
                 ratio = child.wins / child.visits
                 print(ratio)
-                print(child.last)
+                print(child.last + 1)
     
     return best_child.last

@@ -12,12 +12,13 @@ def play_game(board: Board, algorithm=None):
             print(f"Player {board.turn} wins!")
             break
 
-        column = int(input(f"Player {board.turn}, enter the column number (1-{board.cols}): ")) - 1
+        column = input(f"Player {board.turn}, enter the column number (1-{board.cols}): ")
 
-        if not (0 <= column < board.cols):
+        if not (column.isdigit() and  0 <= int(column)-1 < board.cols ):
             print("Invalid column! Please choose a column within the board range.")
             continue
-
+        
+        column = int(column) - 1
         if algorithm is None:
             board.drop_piece_search(column)
         else:
@@ -50,3 +51,48 @@ def play_game(board: Board, algorithm=None):
             else:
                 pass
 
+
+def algvsalg(alg1, alg2):
+    board = Board(6, 7, 'X')
+    begginning = True
+    while True:
+        if board.game_over:
+            board.print_board()
+            winner = alg1 if board.turn == 'O' else alg2
+            print(f"Player {winner} wins!")
+            break
+        if alg1 in ['astar', 'minimax']:
+            if alg1 == 'astar':
+                if begginning:
+                    board.drop_piece_search(random.choice(range(board.cols)))
+                board.drop_piece_search(astar(board))
+            if alg1 == 'minimax':
+                board.drop_piece_search(minimax(board))
+            begginning = False
+        else:
+            board.drop_piece_adversarial(mcts(board))
+            board.change_turn()
+        board.print_board()
+
+        if board.game_over:
+            board.print_board()
+            winner = alg1 if board.turn == 'O' else alg2
+            print(f"Player {winner} wins!")
+            break
+
+        if all(board.grid[0][col] != '-' for col in range(board.cols)):
+            board.print_board()
+            print("It's a draw!")
+            break
+        
+        if alg2 in ['astar', 'minimax']:
+            if alg2 == 'astar':
+                board.drop_piece_search(astar(board))
+            if alg2 == 'minimax':
+                board.drop_piece_search(minimax(board))
+        else:
+            board.drop_piece_adversarial(mcts(board))
+            board.change_turn()
+        board.print_board()
+        
+        
