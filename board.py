@@ -42,8 +42,6 @@ class Board:
                 self.change_turn() 
                 self.last_move = col
                 self.score = self.evaluate()
-                
-                
                 return True
         return False
     

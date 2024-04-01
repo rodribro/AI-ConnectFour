@@ -65,7 +65,8 @@ def algvsalg(alg1, alg2):
             if alg1 == 'astar':
                 if begginning:
                     board.drop_piece_search(random.choice(range(board.cols)))
-                board.drop_piece_search(astar(board))
+                else:
+                    board.drop_piece_search(astar(board))
             if alg1 == 'minimax':
                 board.drop_piece_search(minimax(board))
             begginning = False
