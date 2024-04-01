@@ -46,15 +46,9 @@ class MCTSNode:
         if unexplored_moves:
             # Escolhe uma jogada não explorada aleatoriamente para a expansão
             move = random.choice(unexplored_moves)
-            #print(move)
-            #print(unexplored_moves)
-            
-            #print(unexplored_moves)
-
             new_board = copy.deepcopy(self.state)
             new_board.drop_piece_adversarial(move)
             new_board.change_turn()
-            #new_board.print_board()
             new_node = MCTSNode(new_board, move, parent=self)
             self.children.append(new_node)
             return new_node

@@ -135,7 +135,6 @@ class Board:
                 possible_moves.append(col)
                 suc.change_turn()
 
-
         return successors, possible_moves
             
     
@@ -178,7 +177,6 @@ class Board:
                 return 1
             else:
                 return -1
-        
         return 0
         
     #TODO: Checkar se o evaluete esta mesmo bem
@@ -214,7 +212,5 @@ class Board:
         else:
             total_score -= 16
         return total_score
-    
-        
     
     
