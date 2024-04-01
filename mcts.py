@@ -21,7 +21,7 @@ class MCTSNode:
         return len(legal) == len(self.children)
     
     def is_leaf(self):
-        if (len(self.children) == 0):
+        if (len(self.children) == 0 or self.state.check_winner('X') or self.state.check_winner('O') or self.state.is_full()):
             return True
         else:
             return False
@@ -38,7 +38,6 @@ class MCTSNode:
                 selected_child = child
         return selected_child
 
-#TODO: Expandir individual 
     def expand(self):
         # Identifica as jogadas possíveis que ainda não foram exploradas
         unexplored_moves = [col for col in range(self.state.cols) if self.state.valid_col(col) and all(col != child.last for child in self.children)]
@@ -58,7 +57,6 @@ class MCTSNode:
     def simulate(self):
         sim_state = self.state.copy()
         while not sim_state.game_over and not sim_state.is_full():
-            #print("AHHHHH")
             _, possible_moves = sim_state.successors()
             sim_state.drop_piece_adversarial(random.choice(possible_moves))
             if sim_state.game_over:
@@ -91,14 +89,14 @@ def mcts(board, timeout=10, iterations = 5000):
                 node = node.expand()
                 
 
-        if node.is_leaf():
+        if node.visits>0:
                 node = node.expand()
                 
         if node is not None:    
             result = node.simulate()
             node.backpropagate(result)
         iterations-=1
-    best_child = max(root.children, key=lambda child: child.wins / child.visits)
+    best_child = max(root.children, key=lambda child: child.wins / (child.visits+0.000000001))
     print("--------------------------------------")
     print(best_child)
     for child in root.children:

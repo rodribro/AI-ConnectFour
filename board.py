@@ -39,8 +39,9 @@ class Board:
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
-                self.evaluate()
                 self.change_turn() 
+                self.evaluate()
+                
                 self.last_move = col
                 return True
         return False
@@ -91,9 +92,6 @@ class Board:
         return segment
     
     def check_winner(self, player):
-    #   if self.game_over:
-    #       return True
-      # ter isto descomentado aumenta os scores do mcts mas faz com que o astar fique burro 
       for row in range(len(self.grid)):
           for col in range(len(self.grid[0]) - 3):
               if all(self.grid[row][col + i] == player for i in range(4)):
@@ -147,7 +145,6 @@ class Board:
         else:
             return 'X'
         
-#TODO passar tudo o que esta para baixo para o A*
     def segment_has_both(self,segment):
         player2_count = 0
         player1_count = 0
@@ -159,7 +156,6 @@ class Board:
 
         return player2_count != 0 and player1_count != 0
 
-#TODO: os pontos tem de ser vistos em todas as direçẽos, e independentemente da 1 jogada a bola tem de ir para cima
 
     def evaluate_segment(self, segment):
         if self.segment_has_both(segment) or segment.count(self.turn) == 0:
@@ -182,7 +178,6 @@ class Board:
                 return -1
         return 0
         
-    #TODO: Checkar se o evaluete esta mesmo bem
     def evaluate(self):
         total_score = 0
         if self.check_winner(self.PLAYER1):

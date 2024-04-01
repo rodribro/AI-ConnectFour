@@ -13,7 +13,7 @@ class Node:
         return self.score < node.score 
 
 def astar(board):
-    successors = board.get_successors()
+    successors,_ = board.get_successors()
 
     frontier = []
     for suc in successors:

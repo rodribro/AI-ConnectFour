@@ -6,6 +6,10 @@ from minimax import *
 def play_game(board: Board, algorithm=None):
     while True:
         board.print_board()
+        if all(board.grid[0][col] != '-' for col in range(board.cols)):
+            board.print_board()
+            print("It's a draw!")
+            break
 
         if board.game_over:
             board.change_turn()
@@ -34,7 +38,6 @@ def play_game(board: Board, algorithm=None):
             print(f"Player {board.turn} wins!")
             break
         
-        #use isfull
         if all(board.grid[0][col] != '-' for col in range(board.cols)):
             board.print_board()
             print("It's a draw!")
