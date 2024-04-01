@@ -7,6 +7,7 @@ PRINT_BEST = True
 PRINT_ALL = True
 
 MAX_DEPTH = 3
+MAX_DEPTH = 5
 
 
 def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf")):
