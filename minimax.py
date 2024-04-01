@@ -4,27 +4,28 @@ from time import time
 from board import *
 
 PRINT_BEST = True
-PRINT_ALL = False
+PRINT_ALL = True
 
-MAX_DEPTH = 10
+MAX_DEPTH = 3
 
 
 def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf")):
     nodes_generated = 0
 
     if board.check_winner(board.turn) or depth == 0:
-        return (board.evaluate(), None), nodes_generated + 1
+        return (board.score, None), nodes_generated + 1
 
     if player:
         max_scores = [(float('-inf'), None)]
-        successors, cols = board.successors()
+        successors, cols = board.get_successors()
 
         for i in range(len(successors)):
             t, nodes = minimax_pruns(successors[i], depth - 1, False, alpha, beta)
             score, _ = t
             alpha = max(alpha, score)
             if beta <= alpha:
-                break
+                #break
+                pass
             nodes_generated += nodes
             if PRINT_ALL:
                 if depth == MAX_DEPTH:
@@ -34,17 +35,20 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
                 max_scores.append((score, cols[i]))
             elif score == max_scores[0][0]:
                 max_scores.append((score, cols[i]))
+            
+
         return random.choice(max_scores), nodes_generated
     else:
         min_scores = [(float('inf'), None)]
-        successors, cols = board.successors()
+        successors, cols = board.get_successors()
         for i in range(len(successors)):
             t, nodes = minimax_pruns(successors[i], depth - 1, True, alpha, beta)
             nodes_generated += nodes
             score, _ = t
             beta = min(beta, score)
             if beta <= alpha:
-                break
+                #break
+                pass
             if PRINT_ALL:
                 if depth == MAX_DEPTH:
                     print("Col: " + str(cols[i]) + " Score: " + str(score))
@@ -66,7 +70,6 @@ def minimax(board):
         score, col = t
     tf = time()
     if PRINT_BEST:
-        print("Alpha-Beta pruning algorithm\n")
         print("Best column: " + str(col + 1))
         print("Best score: " + str(score))
         print("Time: " + str(round(tf - ti, 5)) + "s")

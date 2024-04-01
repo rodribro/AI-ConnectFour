@@ -95,9 +95,14 @@ def mcts(board, timeout=10, iterations = 5000):
                 node = node.select_child()
             else: 
                 node = node.expand()
-            
-        result = node.simulate()
-        node.backpropagate(result)
+                
+
+        if node.is_leaf():
+                node = node.expand()
+                
+        if node is not None:    
+            result = node.simulate()
+            node.backpropagate(result)
         iterations-=1
     best_child = max(root.children, key=lambda child: child.wins / child.visits)
     print("--------------------------------------")

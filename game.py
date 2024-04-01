@@ -64,7 +64,7 @@ def algvsalg(alg1, alg2):
         if alg1 in ['astar', 'minimax']:
             if alg1 == 'astar':
                 if begginning:
-                    board.drop_piece_search(random.choice(range(board.cols)))
+                    board.drop_piece_search(random.choice(range(3,5)))
                 else:
                     board.drop_piece_search(astar(board))
             if alg1 == 'minimax':
@@ -73,10 +73,13 @@ def algvsalg(alg1, alg2):
         else:
             board.drop_piece_adversarial(mcts(board))
             board.change_turn()
+        print(f"--------{alg1}------------")
         board.print_board()
+        print(f"--------{alg2}------------")
 
         if board.game_over:
             board.print_board()
+            print("-----------------------------")
             winner = alg1 if board.turn == 'O' else alg2
             print(f"Player {winner} wins!")
             break

@@ -39,9 +39,9 @@ class Board:
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
+                self.evaluate()
                 self.change_turn() 
                 self.last_move = col
-                self.score = self.evaluate()
                 return True
         return False
     
@@ -119,11 +119,14 @@ class Board:
     
     def get_successors(self):
         successors = []
+        possible_moves = []
+
         for i in range(self.cols):
             suc = self.copy()
             if suc.drop_piece_search(i):
                 successors.append(suc)
-        return successors
+                possible_moves.append(i)
+        return successors, possible_moves
     
     def successors(self):
         successors=[]
@@ -213,8 +216,8 @@ class Board:
             total_score += 16
         else:
             total_score -= 16
-        return total_score
-    
+        self.score = total_score    
+        return self.score
         
     
     
