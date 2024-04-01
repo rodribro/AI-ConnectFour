@@ -1,4 +1,4 @@
-from heapq import heappop, heappush, heapify
+from heapq import heappop, heappush
 from board import Board
 
 class Node:
