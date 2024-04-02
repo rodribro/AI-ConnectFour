@@ -16,6 +16,8 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
     if board.check_winner(board.turn) or depth == 0:
         return (board.score, board.last_move), nodes_generated + 1
 
+    mult = 1 if player else -1
+
     if player:
         max_scores = [(float('-inf'), None)]
         successors, cols = board.get_successors()
@@ -23,6 +25,7 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
         for i in range(len(successors)):
             t, nodes = minimax_pruns(successors[i], depth - 1, False, alpha, beta)
             score, _ = t
+            score *= mult
             if PRINT_ALL:
                 if depth == MAX_DEPTH:
                     print(str(depth) + "Col: " + str(cols[i]) + " Score: " + str(score) + " " + str(beta))
@@ -42,7 +45,7 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
 
             nodes_generated += nodes
             
-
+        
         return random.choice(max_scores), nodes_generated
     else:
         min_scores = [(float('inf'), None)]

@@ -1,24 +1,14 @@
 from heapq import heappop, heappush
-from board import Board
+from board import *
 
-class Node:
-    def init(self, board, player, parent=None, column_played=None):
-        self.board = board
-        self.player = player
-        self.parent = parent
-        self.column_played = column_played
-        self.score = 0
+def astar(board, player):
+    successors, _ = board.get_successors()
 
-    def lt(self, node):
-        return self.score < node.score 
-
-def astar(board):
-    successors,_ = board.get_successors()
-
-    
     frontier = []
     for suc in successors:
-       heappush(frontier, suc)
+      if player == 'X':
+         suc.score *=-1 #multiplying by -1 
+      heappush(frontier, suc)
 
     best = heappop(frontier)
     return best.last_move

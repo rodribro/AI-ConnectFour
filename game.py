@@ -46,7 +46,7 @@ def play_game(board: Board, algorithm=None):
 
         if algorithm is not None:
             if algorithm == "astar":
-                board.drop_piece_search(astar(board))
+                board.drop_piece_search(astar(board, 'O'))
             elif algorithm == "mcts":
                 board.drop_piece_adversarial(mcts(board))
                 board.change_turn()
@@ -75,7 +75,7 @@ def algvsalg(alg1, alg2):
                 if begginning:
                     board.drop_piece_search(random.choice(range(3,5)))
                 else:
-                    board.drop_piece_search(astar(board))
+                    board.drop_piece_search(astar(board, 'X'))
             if alg1 == 'minimax':
                 board.drop_piece_search(minimax(board))
             if alg1 == 'negamax':
@@ -102,7 +102,7 @@ def algvsalg(alg1, alg2):
         
         if alg2 in ['astar', 'minimax', 'negamax']:
             if alg2 == 'astar':
-                board.drop_piece_search(astar(board))
+                board.drop_piece_search(astar(board, 'O'))
             if alg2 == 'minimax':
                 board.drop_piece_search(minimax(board))
             if alg2 == 'negamax':
