@@ -57,7 +57,6 @@ def play_game(board: Board, algorithm=None):
             else:
                 pass
 
-
 def algvsalg(alg1, alg2):
     board = Board(6, 7, 'X')
     begginning = True
@@ -112,5 +111,4 @@ def algvsalg(alg1, alg2):
             board.drop_piece_adversarial(mcts(board))
             board.change_turn()
         board.print_board()
-        
         

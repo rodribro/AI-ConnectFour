@@ -20,6 +20,5 @@ def astar(board):
     for suc in successors:
        heappush(frontier, suc)
 
-
     best = heappop(frontier)
     return best.last_move
