@@ -1,6 +1,6 @@
 from board import Board
 
-def negamax_alg(board, depth, player, alpha, beta):
+def negamax_alg(board: Board, depth, player, alpha, beta):
     if depth == 0 or board.game_over:
         return board.evaluate() * (-1 if player == board.PLAYER2 else 1), None
 
