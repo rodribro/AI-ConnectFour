@@ -1,11 +1,11 @@
-from board import Board
+from board import *
 import time
 
 MAX_DEPTH = 5
 
 def negamax_alg(board: Board, depth, player, alpha, beta):
     if depth == 0 or board.game_over:
-        return board.evaluate() * (-1 if player == board.PLAYER2 else 1), None, 1
+        return board.evaluate() * (-1 if player == PLAYER2 else 1), None, 1
 
     max_score = -float('inf')
     best_move = None

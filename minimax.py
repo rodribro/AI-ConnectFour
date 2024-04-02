@@ -54,7 +54,7 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
             t, nodes = minimax_pruns(successors[i], depth - 1, True, alpha, beta)
             nodes_generated += nodes
             score, _ = t
-
+            
             if min_scores[0][0] == float('inf'):
                 min_scores.clear()
                 min_scores.append((score, cols[i]))
