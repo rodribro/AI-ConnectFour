@@ -152,7 +152,7 @@ class Board:
 
 
     def evaluate_segment(self, segment):
-        if self.segment_has_both(segment) or segment.count(self.turn) == 0:
+        if self.segment_has_both(segment) or (segment.count(self.PLAYER1) == 0 and segment.count(self.PLAYER2) == 0):
             return 0
         
         if  segment.count(self.turn) == 3 :
@@ -175,7 +175,7 @@ class Board:
     def evaluate(self):
         total_score = 0
         if self.check_winner(self.PLAYER1):
-            total_score +=  512 
+            total_score += 512 
         if self.check_winner(self.PLAYER2):
             total_score += -512
 
