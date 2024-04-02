@@ -2,6 +2,7 @@ from astar import *
 from mcts import *
 from board import *
 from minimax import *
+from negamax import *
 
 def play_game(board: Board, algorithm=None):
     while True:
@@ -26,7 +27,7 @@ def play_game(board: Board, algorithm=None):
         if algorithm is None:
             board.drop_piece_search(column)
         else:
-            if algorithm == "astar" or algorithm == "minimax":
+            if algorithm == "astar" or algorithm == "minimax" or algorithm == "negamax":
                 board.drop_piece_search(column)
             elif algorithm == "mcts":
                 board.drop_piece_adversarial(column)
@@ -51,6 +52,8 @@ def play_game(board: Board, algorithm=None):
                 board.change_turn()
             elif algorithm == "minimax":
                 board.drop_piece_search(minimax(board))
+            elif algorithm == "negamax":
+                board.drop_piece_search(negamax(board))
             else:
                 pass
 
@@ -59,12 +62,16 @@ def algvsalg(alg1, alg2):
     board = Board(6, 7, 'X')
     begginning = True
     while True:
+        if all(board.grid[0][col] != '-' for col in range(board.cols)):
+            board.print_board()
+            print("It's a draw!")
+            break
         if board.game_over:
             board.print_board()
             winner = alg1 if board.turn == 'O' else alg2
             print(f"Player {winner} wins!")
             break
-        if alg1 in ['astar', 'minimax']:
+        if alg1 in ['astar', 'minimax', 'negamax']:
             if alg1 == 'astar':
                 if begginning:
                     board.drop_piece_search(random.choice(range(3,5)))
@@ -72,6 +79,8 @@ def algvsalg(alg1, alg2):
                     board.drop_piece_search(astar(board))
             if alg1 == 'minimax':
                 board.drop_piece_search(minimax(board))
+            if alg1 == 'negamax':
+                board.drop_piece_search(negamax(board))
             begginning = False
         else:
             board.drop_piece_adversarial(mcts(board))
@@ -92,11 +101,13 @@ def algvsalg(alg1, alg2):
             print("It's a draw!")
             break
         
-        if alg2 in ['astar', 'minimax']:
+        if alg2 in ['astar', 'minimax', 'negamax']:
             if alg2 == 'astar':
                 board.drop_piece_search(astar(board))
             if alg2 == 'minimax':
                 board.drop_piece_search(minimax(board))
+            if alg2 == 'negamax':
+                board.drop_piece_search(negamax(board))
         else:
             board.drop_piece_adversarial(mcts(board))
             board.change_turn()

@@ -4,7 +4,7 @@ from time import time
 from board import *
 
 PRINT_BEST = True
-PRINT_ALL = False
+PRINT_ALL = True
 
 MAX_DEPTH = 5
 
@@ -23,19 +23,21 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
         for i in range(len(successors)):
             t, nodes = minimax_pruns(successors[i], depth - 1, False, alpha, beta)
             score, _ = t
-            alpha = max(alpha, score)
-            if beta <= alpha:
-                #break
-                pass
-            nodes_generated += nodes
-            if PRINT_ALL:
-                if depth == MAX_DEPTH:
-                    print("Col: " + str(cols[i]) + " Score: " + str(score))
+            #if PRINT_ALL:
+                #if depth == MAX_DEPTH:
+                    #print(str(depth) + "Col: " + str(cols[i]) + " Score: " + str(score) + " " + str(beta))
+            
             if score > max_scores[0][0]:
                 max_scores.clear()
                 max_scores.append((score, cols[i]))
             elif score == max_scores[0][0]:
                 max_scores.append((score, cols[i]))
+            if score > beta:
+                break
+                
+            alpha = max(alpha, score)
+
+            nodes_generated += nodes
             
 
         return random.choice(max_scores), nodes_generated
@@ -46,18 +48,20 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
             t, nodes = minimax_pruns(successors[i], depth - 1, True, alpha, beta)
             nodes_generated += nodes
             score, _ = t
-            beta = min(beta, score)
-            if beta <= alpha:
-                #break
-                pass
-            if PRINT_ALL:
-                if depth == MAX_DEPTH:
-                    print("Col: " + str(cols[i]) + " Score: " + str(score))
+
             if score < min_scores[0][0]:
                 min_scores.clear()
                 min_scores.append((score, cols[i]))
             elif score == min_scores[0][0]:
                 min_scores.append((score, cols[i]))
+  
+            #if PRINT_ALL:
+                #if depth == MAX_DEPTH:
+                    #print(str(depth)+ "Col: " + str(cols[i]) + " Score: " + str(score)+ " " + str(alpha))
+            if score < alpha:
+                break
+                
+            beta = min(beta, score)
         return random.choice(min_scores), nodes_generated
 
 
