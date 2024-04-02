@@ -14,6 +14,8 @@ def negamax_alg(board: Board, depth, player, alpha, beta):
     for move in board.get_legal_moves():
         new_board = board.copy()
         new_board.drop_piece_search(move)
+        if best_move is None:
+            best_move = move
         #player nao esta a mudar!!!!
         score, _, generated = negamax_alg(new_board, depth - 1, player, -beta, -alpha)
         score = -score

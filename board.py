@@ -20,7 +20,6 @@ class Board:
             return False  # Column out of range
         return '-' in [row[col] for row in self.grid]  # Check if the column has empty slots
 
-    
     def __lt__(self, board):
             return self.score < board.score 
     
@@ -34,7 +33,6 @@ class Board:
         for row in self.grid:
             print(" ".join(row))
 
-    #A* and MiniMax, checkar dps
     def drop_piece_search(self, col):
         for row in range(self.rows - 1, -1, -1):
             if self.grid[row][col] == '-':
@@ -46,14 +44,12 @@ class Board:
                 return True
         return False
     
-    #MCTS
     def drop_piece_adversarial(self, col):
         for row in range(self.rows -1 , -1 , -1):
             if self.grid[row][col] == '-':
                 self.grid[row][col] = self.turn
                 self.last_move = col
                 self.check_winner(self.turn)
-                #print(self.print_board())
                 return True
                 
         return False
@@ -78,7 +74,6 @@ class Board:
             if self.grid[0][col] == '-' :
                 legal_moves.append(col)
         return legal_moves
-
 
     def is_full(self):
         return all(self.grid[0][col] != '-' for col in range(self.cols))
@@ -138,7 +133,6 @@ class Board:
 
         return successors, possible_moves
             
-    
     def get_opponent(self):
         if self.turn == 'X':
             return 'O'
