@@ -14,7 +14,7 @@ def minimax_pruns(board, depth, player, alpha=float("-inf"), beta=float("+inf"))
     nodes_generated = 0
 
     if board.check_winner(board.turn) or depth == 0:
-        return (board.score, None), nodes_generated + 1
+        return (board.score, -1), nodes_generated + 1
 
     if player:
         max_scores = [(float('-inf'), None)]

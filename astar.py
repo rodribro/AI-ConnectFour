@@ -15,6 +15,7 @@ class Node:
 def astar(board):
     successors,_ = board.get_successors()
 
+    
     frontier = []
     for suc in successors:
        heappush(frontier, suc)
