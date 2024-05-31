@@ -1,7 +1,7 @@
-### AI Connect Four
-Connect Four game implementation that supports PvP and PvAI.
+### <b> AI Connect Four </b>
 
-There are be 4 available AIs to play against which were implemented using:
+Connect Four game implementation that supports PvP and PvAI.
+There are 4 available AIs to play against which were implemented using:
 
 * MiniMax
 * MCTS
