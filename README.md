@@ -1,2 +1,11 @@
-# connectfour
-Connect Four game implementation. It supports PvP and PvAI, there will be 2 available AIs to play against which will be implemented using A* and MCTS algorithms.
+### AI Connect Four
+Connect Four game implementation that supports PvP and PvAI.
+
+There are be 4 available AIs to play against which were implemented using:
+
+* MiniMax
+* MCTS
+* NegaMax
+* A*
+
+Jupyter Notebook contains details of the implementation and algorithm benchmarking.
